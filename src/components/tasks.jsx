@@ -2,7 +2,7 @@ import { TabContext } from "../contexts/tabContext";
 import { useState, useContext, useEffect } from "react";
 import { Check, Edit, Delete } from "@mui/icons-material";
 import { Modal, Box, Alert, LinearProgress } from "@mui/material";
-
+import  notification from "../assets/bright-notification-352449.mp3"
 export default function TasksBox() {
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem('todoTasks');
@@ -23,7 +23,8 @@ export default function TasksBox() {
   useEffect(() => {
     localStorage.setItem('todoTasks', JSON.stringify(tasks));
   }, [tasks]);
-
+// add audio 
+const audio = new Audio(notification)
   // Filter tasks when tab changes
   useEffect(() => {
     switch (currentTab.tab) {
@@ -66,6 +67,7 @@ export default function TasksBox() {
   const [newTask, setNewTask] = useState({ name: "", description: "" });
   function handleAddTask() {
     if (!newTask.name.trim()) return;
+    audio.play()
     setTasks((prev) => [
       ...prev,
       {
@@ -78,8 +80,9 @@ export default function TasksBox() {
     setNewTask({ name: "", description: "" });
     showAlert("Task added successfully", true);
   }
-
+  
   function handleDoneTask(id) {
+    audio.play()
     setTasks((prevTasks) =>
       prevTasks.map((t) =>
         t.id === id ? { ...t, status: !t.status } : t
