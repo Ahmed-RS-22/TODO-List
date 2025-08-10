@@ -4,7 +4,10 @@ import { Check, Edit, Delete } from "@mui/icons-material";
 import { Modal, Box, Alert, LinearProgress } from "@mui/material";
 
 export default function TasksBox() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(() => {
+    const savedTasks = localStorage.getItem('todoTasks');
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
   const [shownTask, setShownTask] = useState([]);
   const currentTab = useContext(TabContext);
 
@@ -15,6 +18,11 @@ export default function TasksBox() {
   });
 
   const [progress, setProgress] = useState(0);
+
+  // Save tasks to localStorage whenever tasks change
+  useEffect(() => {
+    localStorage.setItem('todoTasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   // Filter tasks when tab changes
   useEffect(() => {
@@ -63,11 +71,11 @@ export default function TasksBox() {
       {
         id: Date.now(),
         name: newTask.name,
-        description: "",
+        description: newTask.description || "",
         status: false
       }
     ]);
-    setNewTask({ ...newTask, name: "" });
+    setNewTask({ name: "", description: "" });
     showAlert("Task added successfully", true);
   }
 
@@ -101,7 +109,17 @@ export default function TasksBox() {
     description: ""
   });
 
+  const openEditModal = (task) => {
+    setEditTask({
+      id: task.id,
+      name: task.name,
+      description: task.description
+    });
+    setOpen(true);
+  };
+
   const handleEdit = () => {
+    if (!editTask.name.trim()) return;
     setTasks((prevTasks) =>
       prevTasks.map((t) =>
         t.id === editTask.id
@@ -110,7 +128,13 @@ export default function TasksBox() {
       )
     );
     setOpen(false);
+    setEditTask({ id: "", name: "", description: "" });
     showAlert("Task updated successfully", true);
+  };
+
+  const handleCancelEdit = () => {
+    setOpen(false);
+    setEditTask({ id: "", name: "", description: "" });
   };
 
   return (
@@ -118,47 +142,6 @@ export default function TasksBox() {
       <div className="tasks">
         {shownTask.map((task) => (
           <div className="task-holder" key={task.id}>
-            {/* Edit Modal */}
-            <Modal className="modal-container" open={open} onClose={() => setOpen(false)}>
-              <Box>
-                <form onSubmit={(e) => e.preventDefault()}>
-                  <h2 className="head">Edit task</h2>
-                  <div className="form-group">
-                    <label htmlFor="title">Title</label>
-                    <input
-                      type="text"
-                      value={editTask.name}
-                      onChange={(e) =>
-                        setEditTask({
-                          ...editTask,
-                          name: e.target.value,
-                          id: task.id
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="description">Description</label>
-                    <input
-                      type="text"
-                      value={editTask.description}
-                      onChange={(e) =>
-                        setEditTask({
-                          ...editTask,
-                          description: e.target.value,
-                          id: task.id
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="btns">
-                    <button className="form-btn" onClick={handleEdit}>Change</button>
-                    <button  className="form-btn"onClick={() => setOpen(false)}>Cancel</button>
-                  </div>
-                </form>
-              </Box>
-            </Modal>
-
             <div className="text">
               <div className="name">{task.name}</div>
               <div className="desc">{task.description}</div>
@@ -172,14 +155,7 @@ export default function TasksBox() {
               </button>
               <button
                 className="action-btn"
-                onClick={() => {
-                  setEditTask({
-                    id: task.id,
-                    name: task.name,
-                    description: task.description
-                  });
-                  setOpen(true);
-                }}
+                onClick={() => openEditModal(task)}
               >
                 <Edit />
               </button>
@@ -199,10 +175,51 @@ export default function TasksBox() {
             value={newTask.name}
             placeholder="Add task"
             onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+            onKeyPress={(e) => e.key === 'Enter' && handleAddTask()}
           />
           <input type="submit" value="Add Task" onClick={handleAddTask} />
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <Modal className="modal-container" open={open} onClose={handleCancelEdit}>
+        <Box>
+          <form onSubmit={(e) => { e.preventDefault(); handleEdit(); }}>
+            <h2 className="head">Edit task</h2>
+            <div className="form-group">
+              <label htmlFor="title">Title</label>
+              <input
+                type="text"
+                value={editTask.name}
+                onChange={(e) =>
+                  setEditTask({
+                    ...editTask,
+                    name: e.target.value
+                  })
+                }
+                autoFocus
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="description">Description</label>
+              <input
+                type="text"
+                value={editTask.description}
+                onChange={(e) =>
+                  setEditTask({
+                    ...editTask,
+                    description: e.target.value
+                  })
+                }
+              />
+            </div>
+            <div className="btns">
+              <button type="submit" className="form-btn">Save Changes</button>
+              <button type="button" className="form-btn" onClick={handleCancelEdit}>Cancel</button>
+            </div>
+          </form>
+        </Box>
+      </Modal>
 
       {message.isShown && (
         <Alert
