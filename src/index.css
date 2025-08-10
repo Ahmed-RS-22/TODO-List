@@ -214,6 +214,8 @@ body {
   color: var(--primary-color);
   line-height: 1.4;
   transition: color 0.3s ease;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .task-holder:hover .text .name {
@@ -233,6 +235,7 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
   transition: color 0.3s ease;
+  hyphens: auto;
 }
 
 .task-holder:hover .text .desc {
@@ -580,80 +583,319 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
   .todo {
-    margin: 10px;
-    padding: 15px;
+    margin: 5px;
+    padding: 12px;
     border-radius: 15px;
+    border-width: 2px;
+    min-height: 70dvh;
+  }
+  
+  .todo h1 {
+    font-size: clamp(1.5rem, 6vw, 2.2rem);
+    margin-bottom: 5px;
   }
   
   .tasks .task-holder {
-    width: 95%;
+    width: 100%;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     text-align: center;
+    padding: 12px 15px;
+    min-height: 70px;
+  }
+  
+  .task-holder .text {
+    width: 100%;
+    gap: 6px;
+  }
+  
+  .task-holder .text .name {
+    font-size: clamp(1.1rem, 4vw, 1.3rem);
+    line-height: 1.3;
+  }
+  
+  .task-holder .text .desc {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+    -webkit-line-clamp: 3;
+    line-height: 1.4;
   }
   
   .btn-group {
     width: 100%;
     justify-content: center;
-    gap: 15px;
+    gap: 12px;
+    flex-wrap: nowrap;
   }
   
   .btn-group .action-btn {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
   }
   
   .input-group {
     flex-direction: column;
-    gap: 15px !important;
+    gap: 12px !important;
+    padding: 5px 10px;
   }
   
   .input-group input[type="text"],
   .input-group input[type="submit"] {
     width: 100%;
     min-width: unset;
+    padding: 12px 20px;
+    font-size: clamp(0.95rem, 3.5vw, 1.1rem);
   }
   
   .alert {
-    left: 15px;
-    right: 15px;
+    left: 10px;
+    right: 10px;
+    bottom: 20px;
     min-width: unset;
     max-width: unset;
+    min-height: 70px;
   }
   
   .modal-container {
-    padding: 20px;
+    padding: 10px;
+    height: 100dvh;
   }
   
   .modal-container form {
-    margin: 50px auto;
-    padding: 20px;
-    width: 95%;
+    margin: 20px auto;
+    padding: 15px;
+    width: 98%;
+    max-width: 400px;
+    gap: 20px;
+  }
+  
+  .modal-container form .head {
+    font-size: clamp(1.3rem, 5vw, 1.8rem);
+    text-align: center;
+  }
+  
+  .modal-container form .form-group input[type="text"] {
+    padding: 12px 15px;
+    font-size: clamp(0.95rem, 3.5vw, 1.1rem);
   }
 }
 
 @media (max-width: 480px) {
   .todo {
-    margin: 5px;
-    padding: 10px;
+    margin: 2px;
+    padding: 8px;
+    border-radius: 12px;
+    border-width: 2px;
+    gap: 8px;
+  }
+  
+  .todo h1 {
+    font-size: clamp(1.3rem, 7vw, 2rem);
+    margin-bottom: 3px;
   }
   
   .tasks .task-holder {
-    padding: 10px;
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 12px;
+    min-height: 65px;
+  }
+  
+  .task-holder .text .name {
+    font-size: clamp(1rem, 4.5vw, 1.2rem);
+  }
+  
+  .task-holder .text .desc {
+    font-size: clamp(0.8rem, 3.5vw, 0.95rem);
+    -webkit-line-clamp: 2;
   }
   
   .btn-group .action-btn {
-    width: 45px;
-    height: 45px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  .btn-group {
+    gap: 8px;
+  }
+  
+  .input-group {
+    gap: 10px !important;
+    padding: 5px;
+  }
+  
+  .input-group input[type="text"],
+  .input-group input[type="submit"] {
+    padding: 10px 15px;
+    font-size: clamp(0.9rem, 4vw, 1rem);
+    border-radius: 12px;
   }
   
   .modal-container form .btns {
     flex-direction: column;
     align-items: center;
+    gap: 12px;
   }
   
   .modal-container form .form-btn {
     width: 100%;
+    padding: 10px 20px;
+    font-size: clamp(0.95rem, 3.5vw, 1rem);
+  }
+  
+  .modal-container form {
+    margin: 10px auto;
+    padding: 12px;
+    gap: 15px;
+  }
+  
+  .modal-container form .form-group {
+    gap: 8px;
+  }
+  
+  .modal-container form .form-group label {
+    font-size: clamp(0.95rem, 3.5vw, 1rem);
+  }
+  
+  .alert {
+    left: 5px;
+    right: 5px;
+    bottom: 15px;
+    min-height: 65px;
+  }
+  
+  .alert p {
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    padding: 8px;
+  }
+}
+
+/* Extra small screens (320px and below) */
+@media (max-width: 320px) {
+  .todo {
+    margin: 1px;
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .todo h1 {
+    font-size: clamp(1.1rem, 8vw, 1.8rem);
+  }
+  
+  .tasks .task-holder {
+    padding: 8px 10px;
+    gap: 8px;
+    min-height: 60px;
+  }
+  
+  .btn-group .action-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .btn-group {
+    gap: 6px;
+  }
+  
+  .input-group input[type="text"],
+  .input-group input[type="submit"] {
+    padding: 8px 12px;
+    font-size: clamp(0.85rem, 4.5vw, 0.95rem);
+  }
+  
+  .modal-container form {
+    margin: 5px auto;
+    padding: 10px;
+    width: 99%;
+  }
+  
+  .alert {
+    left: 2px;
+    right: 2px;
+    bottom: 10px;
+    min-height: 60px;
+  }
+}
+
+/* Landscape orientation on small screens */
+@media (max-height: 500px) and (orientation: landscape) {
+  .todo {
+    min-height: 85dvh;
+    padding: 10px;
+  }
+  
+  .todo h1 {
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    margin-bottom: 5px;
+  }
+  
+  .tasks .task-holder {
+    flex-direction: row;
+    min-height: 60px;
+    padding: 8px 12px;
+  }
+  
+  .btn-group {
+    flex-direction: row;
+    width: auto;
+    gap: 8px;
+  }
+  
+  .btn-group .action-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .input-group {
+    flex-direction: row;
+    gap: 10px !important;
+  }
+  
+  .input-group input[type="text"] {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .input-group input[type="submit"] {
+    min-width: 120px;
+  }
+  
+  .modal-container {
+    padding: 5px;
+  }
+  
+  .modal-container form {
+    margin: 10px auto;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn-group .action-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  .input-group input[type="text"],
+  .input-group input[type="submit"] {
+    min-height: 48px;
+  }
+  
+  .modal-container form .form-btn {
+    min-height: 48px;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .task-holder:hover {
+    transform: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  .btn-group .action-btn:hover {
+    transform: none;
+    animation: none;
   }
 }
 
