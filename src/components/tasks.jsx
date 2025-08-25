@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { TabContext } from "../contexts/tabContext";
 import { useState, useContext, useEffect } from "react";
 import { Check, Edit, Delete } from "@mui/icons-material";
@@ -81,14 +82,23 @@ const audio = new Audio(notification)
     showAlert("Task added successfully", true);
   }
   
+  const[doneTask,setDoneTask] = useState({
+    value:"",
+    state:false
+  })
   function handleDoneTask(id) {
-    audio.play()
     setTasks((prevTasks) =>
       prevTasks.map((t) =>
         t.id === id ? { ...t, status: !t.status } : t
       )
     );
-    showAlert("Task done", true);
+    const updatedTask = tasks.find((t) => t.id === id);
+    const newStatus = updatedTask && !updatedTask.status ? "done" : "not done";
+    audio.play();
+    showAlert(
+      `Task "${updatedTask ? updatedTask.name : ""}" marked as ${newStatus}`,
+      newStatus === "done"
+    );
   }
 
   function deleteTask(id) {
@@ -172,6 +182,7 @@ const audio = new Audio(notification)
           </div>
         ))}
         <hr />
+      </div>
         <div className="input-group">
           <input
             type="text"
@@ -182,7 +193,6 @@ const audio = new Audio(notification)
           />
           <input type="submit" value="Add Task" onClick={handleAddTask} />
         </div>
-      </div>
 
       {/* Edit Modal */}
       <Modal className="modal-container" open={open} onClose={handleCancelEdit}>
