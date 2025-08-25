@@ -2,8 +2,8 @@
 import { TabContext } from "../contexts/tabContext";
 import { useState, useContext, useEffect } from "react";
 import { Check, Edit, Delete } from "@mui/icons-material";
-import { Modal, Box, Alert, LinearProgress } from "@mui/material";
-import  notification from "../assets/bright-notification-352449.mp3"
+import { Modal, Box, Alert } from "@mui/material";
+
 export default function TasksBox() {
   const [tasks, setTasks] = useState(() => {
     const savedTasks = localStorage.getItem('todoTasks');
@@ -18,14 +18,11 @@ export default function TasksBox() {
     isShown: false
   });
 
-  const [progress, setProgress] = useState(0);
-
   // Save tasks to localStorage whenever tasks change
   useEffect(() => {
     localStorage.setItem('todoTasks', JSON.stringify(tasks));
   }, [tasks]);
-// add audio 
-const audio = new Audio(notification)
+
   // Filter tasks when tab changes
   useEffect(() => {
     switch (currentTab.tab) {
@@ -41,34 +38,22 @@ const audio = new Audio(notification)
     }
   }, [tasks, currentTab.tab]);
 
-  // Progress + auto-hide alert
+  // Auto-hide alert
   useEffect(() => {
     if (!message.isShown) return;
 
-    setProgress(0); // reset progress
-    const duration = 2000; // 5 seconds
-    const stepTime = 100; // update every 100ms
-    const stepAmount = (100 / (duration / stepTime));
+    const timer = setTimeout(() => {
+      setMessage((prevMsg) => ({ ...prevMsg, isShown: false }));
+    }, 3000);
 
-    const progressTimer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressTimer);
-          setMessage((prevMsg) => ({ ...prevMsg, isShown: false }));
-          return 100;
-        }
-        return prev + stepAmount;
-      });
-    }, stepTime);
-
-    return () => clearInterval(progressTimer);
+    return () => clearTimeout(timer);
   }, [message.isShown]);
 
   // Handlers
   const [newTask, setNewTask] = useState({ name: "", description: "" });
   function handleAddTask() {
     if (!newTask.name.trim()) return;
-    audio.play()
+    
     setTasks((prev) => [
       ...prev,
       {
@@ -82,10 +67,6 @@ const audio = new Audio(notification)
     showAlert("Task added successfully", true);
   }
   
-  const[doneTask,setDoneTask] = useState({
-    value:"",
-    state:false
-  })
   function handleDoneTask(id) {
     setTasks((prevTasks) =>
       prevTasks.map((t) =>
@@ -94,7 +75,6 @@ const audio = new Audio(notification)
     );
     const updatedTask = tasks.find((t) => t.id === id);
     const newStatus = updatedTask && !updatedTask.status ? "done" : "not done";
-    audio.play();
     showAlert(
       `Task "${updatedTask ? updatedTask.name : ""}" marked as ${newStatus}`,
       newStatus === "done"
@@ -240,7 +220,6 @@ const audio = new Audio(notification)
           color={message.status ? "success" : "error"}
           className="alert"
         >
-          <LinearProgress variant="determinate" value={progress}  color={message.status ? "success" : "error"} />
           <p>{message.message}</p>
         </Alert>
       )}
