@@ -1,42 +1,49 @@
 /* eslint-disable no-unused-vars */
 import { TabContext } from "../contexts/tabContext";
-import { useState, useContext, useEffect } from "react";
+import React , { useState, useContext, useEffect, useMemo ,useCallback} from "react";
 import { Check, Edit, Delete } from "@mui/icons-material";
 import { Modal, Box, Alert } from "@mui/material";
 
 export default function TasksBox() {
   const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem('todoTasks');
+    const savedTasks = localStorage.getItem('todoTasks');    
     return savedTasks ? JSON.parse(savedTasks) : [];
   });
-  const [shownTask, setShownTask] = useState([]);
   const currentTab = useContext(TabContext);
-
   const [message, setMessage] = useState({
     message: "",
     status: true,
     isShown: false
   });
-
+  
   // Save tasks to localStorage whenever tasks change
   useEffect(() => {
     localStorage.setItem('todoTasks', JSON.stringify(tasks));
   }, [tasks]);
-
+  
   // Filter tasks when tab changes
-  useEffect(() => {
-    switch (currentTab.tab) {
-      case "done":
-        setShownTask(tasks.filter((task) => task.status));
-        break;
-      case "task":
-        setShownTask(tasks.filter((task) => !task.status));
-        break;
-      default:
-        setShownTask(tasks);
-        break;
-    }
-  }, [tasks, currentTab.tab]);
+  // const [shownTask, setShownTask] = useState([]);
+  // useEffect(() => {
+  //   switch (currentTab.tab) {
+  //     case "done":
+  //       setShownTask(tasks.filter((task) => task.status));        
+  //       break;
+  //     case "task":
+  //       setShownTask(tasks.filter((task) => !task.status));
+  //       break;
+  //     default:
+  //       setShownTask(tasks);
+  //       break;
+  //   }
+  // }, [tasks, currentTab.tab]);
+  const shownTask = useMemo(() => {
+  switch (currentTab.tab) {
+    case "done": return tasks.filter((t) => t.status);
+    case "task": return tasks.filter((t) => !t.status);
+    default: return tasks;
+  }
+}, [tasks, currentTab.tab]);
+
 
   // Auto-hide alert
   useEffect(() => {
@@ -51,7 +58,7 @@ export default function TasksBox() {
 
   // Handlers
   const [newTask, setNewTask] = useState({ name: "", description: "" });
-  function handleAddTask() {
+  const handleAddTask =useCallback(()=> {
     if (!newTask.name.trim()) return;
     
     setTasks((prev) => [
@@ -65,9 +72,9 @@ export default function TasksBox() {
     ]);
     setNewTask({ name: "", description: "" });
     showAlert("Task added successfully", true);
-  }
+  },[newTask]);
   
-  function handleDoneTask(id) {
+  const handleDoneTask =useCallback((id)=> {
     setTasks((prevTasks) =>
       prevTasks.map((t) =>
         t.id === id ? { ...t, status: !t.status } : t
@@ -79,12 +86,12 @@ export default function TasksBox() {
       `Task "${updatedTask ? updatedTask.name : ""}" marked as ${newStatus}`,
       newStatus === "done"
     );
-  }
+  },[tasks])
 
-  function deleteTask(id) {
+  const deleteTask =useCallback((id)=> {
     setTasks((prev) => prev.filter((task) => task.id !== id));
     showAlert("Task deleted", false);
-  }
+  },[])
 
   function showAlert(msg, status) {
     setMessage({

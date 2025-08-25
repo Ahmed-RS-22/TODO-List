@@ -1,7 +1,7 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {Container } from "@mui/material";
 import { deepOrange,red , blue ,green} from "@mui/material/colors";
-import './App.css'
+import './index.css'
 import ToggleButtons from "./components/tabs";
 import TaskBox from "./components/tasks";
 import { MyProvider } from "./contexts/provider";

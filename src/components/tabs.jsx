@@ -2,16 +2,16 @@
 import * as React from 'react';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { useContext } from 'react';
+import { useContext,useCallback } from 'react';
 import { TabContext } from '../contexts/tabContext';
 
 export default function ToggleButtons() {
     const {currentTab , updateTab}=useContext(TabContext)
   const [alignment, setAlignment] = React.useState('all');
-  const handleChange = (event, newAlignment) => {
+  const handleChange = useCallback((event, newAlignment) => {
     setAlignment(newAlignment);
     updateTab(newAlignment)
-  };
+  }, [updateTab]);
 
   return (
     <ToggleButtonGroup
